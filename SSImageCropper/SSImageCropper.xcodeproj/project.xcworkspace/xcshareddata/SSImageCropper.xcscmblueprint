@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "69087B27DE9C264D28B0F4817A52F965D75DE8DD",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "EBCE5C9FA1F4681FCF67B24B425A2052E8CCD811" : 0,
+    "69087B27DE9C264D28B0F4817A52F965D75DE8DD" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "FF8E4942-4C8B-41C6-BFD2-0F032BFD2704",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "EBCE5C9FA1F4681FCF67B24B425A2052E8CCD811" : "",
+    "69087B27DE9C264D28B0F4817A52F965D75DE8DD" : "SSImageCropEdit\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "SSImageCropper",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "SSImageCropper\/SSImageCropper.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/dulingkang\/SSImageCropEdit.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "69087B27DE9C264D28B0F4817A52F965D75DE8DD"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/dulingkang\/shawndu.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "EBCE5C9FA1F4681FCF67B24B425A2052E8CCD811"
+    }
+  ]
+}
