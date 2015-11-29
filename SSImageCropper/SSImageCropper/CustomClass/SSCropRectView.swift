@@ -133,11 +133,12 @@ class SSCropRectView: UIView, SSResizeControlDelegate {
     }
     
     func resizeControlViewDidResize(resizeControlView: SSResizeControl) {
-        self.frame = self.cropRectMakeWithResizeControlView
+        self.frame = self.cropRectMakeWithResizeControlView(resizeControlView)
+        self.delegate?.cropRectViewEditingChanged(self)
     }
     
     func resizeControlViewDidEndResizing(resizeControlView: SSResizeControl) {
-        
+        self.delegate?.cropRectViewDidEndEditing(self)
     }
     
     //MARK: - private method
@@ -192,7 +193,7 @@ class SSCropRectView: UIView, SSResizeControlDelegate {
         self.addSubview(self.rightEdgeView)
     }
     
-    private func cropRectMakeWithResizeControlView(resizeControlView: SSResizeControl) {
+    private func cropRectMakeWithResizeControlView(resizeControlView: SSResizeControl) -> CGRect {
         var rect = self.frame
         if resizeControlView == self.topEdgeView {
             rect = CGRectMake(CGRectGetMinX(self.initialRect),
@@ -204,6 +205,121 @@ class SSCropRectView: UIView, SSResizeControlDelegate {
                 rect = self.constrainedRectWithRectBasisOfHeight(rect, aspectRatio: self.fixedAspectRatio)
             }
         }
+        
+        if resizeControlView == self.leftEdgeView {
+            rect = CGRectMake(CGRectGetMinX(self.initialRect) + resizeControlView.translation.x,
+                CGRectGetMinY(self.initialRect),
+                CGRectGetWidth(self.initialRect) - resizeControlView.translation.x,
+                CGRectGetHeight(self.initialRect));
+            
+            if (self.keepAspectRatio) {
+                rect = self.constrainedRectWithRectBasisOfHeight(rect, aspectRatio: self.fixedAspectRatio)
+            }
+        } else if resizeControlView == self.bottomEdgeView {
+            rect = CGRectMake(CGRectGetMinX(self.initialRect),
+                CGRectGetMinY(self.initialRect),
+                CGRectGetWidth(self.initialRect),
+                CGRectGetHeight(self.initialRect) + resizeControlView.translation.y);
+            
+            if (self.keepAspectRatio) {
+                rect = self.constrainedRectWithRectBasisOfHeight(rect, aspectRatio: self.fixedAspectRatio)
+            }
+        } else if resizeControlView == self.rightEdgeView {
+            rect = CGRectMake(CGRectGetMinX(self.initialRect),
+                CGRectGetMinY(self.initialRect),
+                CGRectGetWidth(self.initialRect) + resizeControlView.translation.x,
+                CGRectGetHeight(self.initialRect));
+            
+            if (self.keepAspectRatio) {
+                rect = self.constrainedRectWithRectBasisOfHeight(rect, aspectRatio: self.fixedAspectRatio)
+            }
+        } else if resizeControlView == self.topLeftCornerView {
+            rect = CGRectMake(CGRectGetMinX(self.initialRect) + resizeControlView.translation.x,
+                CGRectGetMinY(self.initialRect) + resizeControlView.translation.y,
+                CGRectGetWidth(self.initialRect) - resizeControlView.translation.x,
+                CGRectGetHeight(self.initialRect) - resizeControlView.translation.y);
+            
+            if (self.keepAspectRatio) {
+                var constrainedRect: CGRect
+                if (abs(resizeControlView.translation.x) < abs(resizeControlView.translation.y)) {
+                    constrainedRect = self.constrainedRectWithRectBasisOfHeight(rect, aspectRatio: self.fixedAspectRatio)
+                } else {
+                    constrainedRect = self.constrainedRectWithRectBasisOfWidth(rect, aspectRatio: self.fixedAspectRatio)
+                }
+                constrainedRect.origin.x -= CGRectGetWidth(constrainedRect) - CGRectGetWidth(rect);
+                constrainedRect.origin.y -= CGRectGetHeight(constrainedRect) - CGRectGetHeight(rect);
+                rect = constrainedRect;
+            }
+        } else if resizeControlView == self.topRightCornerView {
+            rect = CGRectMake(CGRectGetMinX(self.initialRect),
+                CGRectGetMinY(self.initialRect) + resizeControlView.translation.y,
+                CGRectGetWidth(self.initialRect) + resizeControlView.translation.x,
+                CGRectGetHeight(self.initialRect) - resizeControlView.translation.y);
+            
+            if (self.keepAspectRatio) {
+                if (abs(resizeControlView.translation.x) < abs(resizeControlView.translation.y)) {
+                    rect = self.constrainedRectWithRectBasisOfHeight(rect, aspectRatio: self.fixedAspectRatio)
+                } else {
+                    rect = self.constrainedRectWithRectBasisOfWidth(rect, aspectRatio: self.fixedAspectRatio)
+                }
+            }
+        } else if resizeControlView == self.bottomLeftCornerView {
+            rect = CGRectMake(CGRectGetMinX(self.initialRect) + resizeControlView.translation.x,
+                CGRectGetMinY(self.initialRect),
+                CGRectGetWidth(self.initialRect) - resizeControlView.translation.x,
+                CGRectGetHeight(self.initialRect) + resizeControlView.translation.y);
+            
+            if (self.keepAspectRatio) {
+                var constrainedRect: CGRect
+                if (abs(resizeControlView.translation.x) < abs(resizeControlView.translation.y)) {
+                    constrainedRect = self.constrainedRectWithRectBasisOfHeight(rect, aspectRatio: self.fixedAspectRatio)
+                } else {
+                    constrainedRect = self.constrainedRectWithRectBasisOfWidth(rect, aspectRatio: self.fixedAspectRatio)
+                }
+                constrainedRect.origin.x -= CGRectGetWidth(constrainedRect) - CGRectGetWidth(rect);
+                rect = constrainedRect;
+            }
+        } else if resizeControlView == self.bottomRightCornerView {
+            rect = CGRectMake(CGRectGetMinX(self.initialRect),
+                CGRectGetMinY(self.initialRect),
+                CGRectGetWidth(self.initialRect) + resizeControlView.translation.x,
+                CGRectGetHeight(self.initialRect) + resizeControlView.translation.y);
+            
+            if (self.keepAspectRatio) {
+                if (abs(resizeControlView.translation.x) < abs(resizeControlView.translation.y)) {
+                    rect = self.constrainedRectWithRectBasisOfHeight(rect, aspectRatio: self.fixedAspectRatio)
+                } else {
+                    rect = self.constrainedRectWithRectBasisOfWidth(rect, aspectRatio: self.fixedAspectRatio)
+                }
+            }
+        }
+        
+        let minWidth = CGRectGetWidth(self.leftEdgeView.bounds) + CGRectGetWidth(self.rightEdgeView.bounds);
+        if (CGRectGetWidth(rect) < minWidth) {
+            rect.origin.x = CGRectGetMaxX(self.frame) - minWidth;
+            rect.size.width = minWidth;
+        }
+        let minHeight = CGRectGetHeight(self.topEdgeView.bounds) + CGRectGetHeight(self.bottomEdgeView.bounds);
+        if (CGRectGetHeight(rect) < minHeight) {
+            rect.origin.y = CGRectGetMaxY(self.frame) - minHeight;
+            rect.size.height = minHeight;
+        }
+        
+        if (self.keepAspectRatio) {
+            var constrainedRect = rect
+            
+            if (CGRectGetWidth(rect) < minWidth) {
+                constrainedRect.size.width = rect.size.height * (minWidth / rect.size.width);
+            }
+            
+            if (CGRectGetHeight(rect) < minHeight) {
+                constrainedRect.size.height = rect.size.width * (minHeight / rect.size.height);
+            }
+            
+            rect = constrainedRect;
+        }
+        
+        return rect;
     }
     
     private func constrainedRectWithRectBasisOfHeight(var rect: CGRect, aspectRatio: CGFloat) -> CGRect{
@@ -219,4 +335,16 @@ class SSCropRectView: UIView, SSResizeControlDelegate {
         return rect;
     }
     
+    private func constrainedRectWithRectBasisOfWidth(var rect: CGRect, aspectRatio: CGFloat) -> CGRect {
+        let width = CGRectGetWidth(rect);
+        var height = CGRectGetHeight(rect);
+        if (width < height) {
+            height = width * self.fixedAspectRatio
+        } else {
+            height = width / self.fixedAspectRatio
+        }
+        rect.size = CGSizeMake(width, height)
+        
+        return rect;
+    }
 }
