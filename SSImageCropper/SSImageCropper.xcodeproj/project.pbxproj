@@ -14,6 +14,7 @@
 		3ADBA84D1C089ECB0080E0A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3ADBA84C1C089ECB0080E0A7 /* Assets.xcassets */; };
 		3ADBA8501C089ECB0080E0A7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3ADBA84E1C089ECB0080E0A7 /* LaunchScreen.storyboard */; };
 		3ADBA8591C089F370080E0A7 /* SSCropRectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADBA8581C089F370080E0A7 /* SSCropRectView.swift */; };
+		3AE596721C0C16C900E7700B /* SSCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE596711C0C16C900E7700B /* SSCropView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		3ADBA84F1C089ECB0080E0A7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3ADBA8511C089ECB0080E0A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3ADBA8581C089F370080E0A7 /* SSCropRectView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SSCropRectView.swift; sourceTree = "<group>"; };
+		3AE596711C0C16C900E7700B /* SSCropView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SSCropView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 			children = (
 				3ADBA8581C089F370080E0A7 /* SSCropRectView.swift */,
 				3A87AE5A1C09394500E4F446 /* SSResizeControl.swift */,
+				3AE596711C0C16C900E7700B /* SSCropView.swift */,
 			);
 			path = CustomClass;
 			sourceTree = "<group>";
@@ -152,6 +155,7 @@
 				3ADBA8591C089F370080E0A7 /* SSCropRectView.swift in Sources */,
 				3ADBA8481C089ECB0080E0A7 /* ViewController.swift in Sources */,
 				3A87AE5B1C09394500E4F446 /* SSResizeControl.swift in Sources */,
+				3AE596721C0C16C900E7700B /* SSCropView.swift in Sources */,
 				3ADBA8461C089ECB0080E0A7 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
