@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3A87AE5B1C09394500E4F446 /* SSResizeControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A87AE5A1C09394500E4F446 /* SSResizeControl.swift */; };
+		3AD889541C0D746D00727473 /* SSCropViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD889531C0D746D00727473 /* SSCropViewController.swift */; };
 		3ADBA8461C089ECB0080E0A7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADBA8451C089ECB0080E0A7 /* AppDelegate.swift */; };
 		3ADBA8481C089ECB0080E0A7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADBA8471C089ECB0080E0A7 /* ViewController.swift */; };
 		3ADBA84B1C089ECB0080E0A7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3ADBA8491C089ECB0080E0A7 /* Main.storyboard */; };
@@ -20,6 +21,7 @@
 
 /* Begin PBXFileReference section */
 		3A87AE5A1C09394500E4F446 /* SSResizeControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SSResizeControl.swift; sourceTree = "<group>"; };
+		3AD889531C0D746D00727473 /* SSCropViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SSCropViewController.swift; sourceTree = "<group>"; };
 		3ADBA8421C089ECB0080E0A7 /* SSImageCropper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SSImageCropper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3ADBA8451C089ECB0080E0A7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3ADBA8471C089ECB0080E0A7 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 				3A87AE5A1C09394500E4F446 /* SSResizeControl.swift */,
 				3AE596711C0C16C900E7700B /* SSCropView.swift */,
 				3ADE26171C0C99E000C04CDD /* ImageCropExtention.swift */,
+				3AD889531C0D746D00727473 /* SSCropViewController.swift */,
 			);
 			path = CustomClass;
 			sourceTree = "<group>";
@@ -161,6 +164,7 @@
 				3AE596721C0C16C900E7700B /* SSCropView.swift in Sources */,
 				3ADE26181C0C99E000C04CDD /* ImageCropExtention.swift in Sources */,
 				3ADBA8461C089ECB0080E0A7 /* AppDelegate.swift in Sources */,
+				3AD889541C0D746D00727473 /* SSCropViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -226,6 +226,37 @@ class SSCropView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate, SSC
         }
     }
     
+    //MARK: -  delegate
+    //MARK:  gesture delegate
+    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    //MARK:  scrollView delegate
+    func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
+        return self.zoomingView
+    }
+    
+    func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        targetContentOffset.memory = scrollView.contentOffset
+    }
+    
+    //MARK:  cropRectView delegate
+    func cropRectViewDidBeginEditing(cropRectView: SSCropRectView) {
+        self.resizing = true
+    }
+    
+    func cropRectViewEditingChanged(cropRectView: SSCropRectView) {
+        let cropRect = self.cappedCropRectInImageRectWithCropRectView(cropRectView)
+        self.layoutCropRectViewWithCropRect(cropRect)
+        self.automaticZoomIfEdgeTouched(cropRect)
+    }
+    
+    func cropRectViewDidEndEditing(cropRectView: SSCropRectView) {
+        self.resizing = false
+        self.zoomToCropRect(self.cropRectView.frame)
+    }
+    
     //MARK: - public method
     func resetCropRect() {
         self.resetCropRectAnimated(false)
@@ -397,32 +428,60 @@ class SSCropView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate, SSC
     
     private func cappedCropRectInImageRectWithCropRectView(cropRectView: SSCropRectView) -> CGRect {
         
-        let cropRect = cropRectView.frame
+        var cropRect = cropRectView.frame
         
         let rect = self.convertRect(cropRect, toView: self.scrollView)
-        if (CGRectGetMinX(rect) < CGRectGetMinX(self.zoomingView.frame)) {
-            cropRect.origin.x = CGRectGetMinX([self.scrollView convertRect:self.zoomingView.frame toView:self]);
-            CGFloat cappedWidth = CGRectGetMaxX(rect);
+        if (CGRectGetMinX(rect) < CGRectGetMinX(self.zoomingView!.frame)) {
+            cropRect.origin.x = CGRectGetMinX(self.scrollView.convertRect(self.zoomingView!.frame, toView: self))
+            let cappedWidth = CGRectGetMaxX(rect)
             cropRect.size = CGSizeMake(cappedWidth,
-                !self.keepingCropAspectRatio ? cropRect.size.height : cropRect.size.height * (cappedWidth/cropRect.size.width));
+                !self.keepingCropAspectRatio ? cropRect.size.height : cropRect.size.height * (cappedWidth/cropRect.size.width))
         }
-        if (CGRectGetMinY(rect) < CGRectGetMinY(self.zoomingView.frame)) {
-            cropRect.origin.y = CGRectGetMinY([self.scrollView convertRect:self.zoomingView.frame toView:self]);
-            CGFloat cappedHeight =  CGRectGetMaxY(rect);
+        if (CGRectGetMinY(rect) < CGRectGetMinY(self.zoomingView!.frame)) {
+            cropRect.origin.y = CGRectGetMinY(self.scrollView.convertRect(self.zoomingView!.frame, toView: self))
+            let cappedHeight =  CGRectGetMaxY(rect);
             cropRect.size = CGSizeMake(!self.keepingCropAspectRatio ? cropRect.size.width : cropRect.size.width * (cappedHeight / cropRect.size.height),
-                cappedHeight);
+                cappedHeight)
         }
-        if (CGRectGetMaxX(rect) > CGRectGetMaxX(self.zoomingView.frame)) {
-            CGFloat cappedWidth = CGRectGetMaxX([self.scrollView convertRect:self.zoomingView.frame toView:self]) - CGRectGetMinX(cropRect);
+        if (CGRectGetMaxX(rect) > CGRectGetMaxX(self.zoomingView!.frame)) {
+            let cappedWidth = CGRectGetMaxX(self.scrollView.convertRect(self.zoomingView!.frame, toView: self)) - CGRectGetMinX(cropRect)
             cropRect.size = CGSizeMake(cappedWidth,
-                !self.keepingCropAspectRatio ? cropRect.size.height : cropRect.size.height * (cappedWidth/cropRect.size.width));
+                !self.keepingCropAspectRatio ? cropRect.size.height : cropRect.size.height * (cappedWidth/cropRect.size.width))
         }
-        if (CGRectGetMaxY(rect) > CGRectGetMaxY(self.zoomingView.frame)) {
-            CGFloat cappedHeight =  CGRectGetMaxY([self.scrollView convertRect:self.zoomingView.frame toView:self]) - CGRectGetMinY(cropRect);
+        if (CGRectGetMaxY(rect) > CGRectGetMaxY(self.zoomingView!.frame)) {
+            let cappedHeight =  CGRectGetMaxY(self.scrollView.convertRect(self.zoomingView!.frame, toView: self)) - CGRectGetMinY(cropRect);
             cropRect.size = CGSizeMake(!self.keepingCropAspectRatio ? cropRect.size.width : cropRect.size.width * (cappedHeight / cropRect.size.height),
-                cappedHeight);
+                cappedHeight)
         }
         
         return cropRect
+    }
+    
+    private func automaticZoomIfEdgeTouched(cropRect: CGRect) {
+        if (CGRectGetMinX(cropRect) < CGRectGetMinX(self.editingRect) - 5.0 ||
+            CGRectGetMaxX(cropRect) > CGRectGetMaxX(self.editingRect) + 5.0 ||
+            CGRectGetMinY(cropRect) < CGRectGetMinY(self.editingRect) - 5.0 ||
+            CGRectGetMaxY(cropRect) > CGRectGetMaxY(self.editingRect) + 5.0) {
+                UIView.animateWithDuration(1.0, delay: 0.0, options: UIViewAnimationOptions.BeginFromCurrentState, animations: {
+                    self.zoomToCropRect(self.cropRectView.frame)
+                    }, completion: { (complate) -> Void in
+                })
+        }
+    }
+    
+    private func handleRotation(gestureRecognizer: UIRotationGestureRecognizer) {
+        let rotation = gestureRecognizer.rotation
+        
+        let transform = CGAffineTransformRotate(self.imageView!.transform, rotation)
+        self.imageView!.transform = transform;
+        gestureRecognizer.rotation = 0.0
+        
+        if (gestureRecognizer.state == UIGestureRecognizerState.Began) {
+            self.cropRectView.showGridSmall = true
+        } else if (gestureRecognizer.state == UIGestureRecognizerState.Ended ||
+            gestureRecognizer.state == UIGestureRecognizerState.Cancelled ||
+            gestureRecognizer.state == UIGestureRecognizerState.Failed) {
+                self.cropRectView.showGridSmall = false
+        }
     }
 }
