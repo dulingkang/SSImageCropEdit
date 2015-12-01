@@ -43,9 +43,49 @@ class SSCropView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate, SSC
             return self.image?.rotatedImageWithtransform(self.rotation, rect: self.zoomedCropRect)
         }
     }
-    var zoomedCropRect: CGRec
-    var rotation: CGAffineTransform!
-    var userHasModifiedCropArea: Bool!
+    var zoomedCropRect: CGRect {
+        set {
+            
+        }
+        get {
+            let cropRect = self.convertRect(self.scrollView.frame, toView: self.zoomingView)
+            let size = self.image!.size
+            
+            var ratio: CGFloat = 1.0
+            let orientation = UIApplication.sharedApplication().statusBarOrientation
+            if (UIInterfaceOrientationIsPortrait(orientation)) {
+                ratio = CGRectGetWidth(AVMakeRectWithAspectRatioInsideRect(self.image!.size, self.insetRect)) / size.width
+            } else {
+                ratio = CGRectGetHeight(AVMakeRectWithAspectRatioInsideRect(self.image!.size, self.insetRect)) / size.height
+            }
+            
+            let zoomedCropRect = CGRectMake(cropRect.origin.x / ratio,
+                cropRect.origin.y / ratio,
+                cropRect.size.width / ratio,
+                cropRect.size.height / ratio)
+            
+            return zoomedCropRect
+        }
+    }
+    var rotation: CGAffineTransform! {
+        set {
+            
+        }
+        get {
+            return self.imageView!.transform
+        }
+    }
+    var userHasModifiedCropArea: Bool! {
+        set {
+            
+        }
+        get {
+            let zoomedCropRect = CGRectIntegral(self.zoomedCropRect);
+            return (!CGPointEqualToPoint(zoomedCropRect.origin, CGPointZero) ||
+                !CGSizeEqualToSize(zoomedCropRect.size, self.image!.size) ||
+                !CGAffineTransformEqualToTransform(self.rotation, CGAffineTransformIdentity))
+        }
+    }
     var keepingCropAspectRatio: Bool! {
         set {
             self.cropRectView.keepAspectRatio = self.keepingCropAspectRatio
@@ -98,7 +138,15 @@ class SSCropView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate, SSC
             return self.imageCropRect
         }
     }
-    var rotationAngle: CGFloat!
+    var rotationAngle: CGFloat! {
+        get {
+            let rotation = self.imageView!.transform
+            return CGFloat(atan2f(Float(rotation.b), Float(rotation.a)))
+        }
+        set {
+            self.imageView!.transform = CGAffineTransformMakeRotation(rotationAngle)
+        }
+    }
     var rotationGestureRecognizer: UIRotationGestureRecognizer!
     
     private let MarginTop: CGFloat = 37.0
@@ -345,5 +393,36 @@ class SSCropView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate, SSC
         }
         cropRect.size = CGSizeMake(width, height);
         self.zoomToCropRect(cropRect, center: center)
+    }
+    
+    private func cappedCropRectInImageRectWithCropRectView(cropRectView: SSCropRectView) -> CGRect {
+        
+        let cropRect = cropRectView.frame
+        
+        let rect = self.convertRect(cropRect, toView: self.scrollView)
+        if (CGRectGetMinX(rect) < CGRectGetMinX(self.zoomingView.frame)) {
+            cropRect.origin.x = CGRectGetMinX([self.scrollView convertRect:self.zoomingView.frame toView:self]);
+            CGFloat cappedWidth = CGRectGetMaxX(rect);
+            cropRect.size = CGSizeMake(cappedWidth,
+                !self.keepingCropAspectRatio ? cropRect.size.height : cropRect.size.height * (cappedWidth/cropRect.size.width));
+        }
+        if (CGRectGetMinY(rect) < CGRectGetMinY(self.zoomingView.frame)) {
+            cropRect.origin.y = CGRectGetMinY([self.scrollView convertRect:self.zoomingView.frame toView:self]);
+            CGFloat cappedHeight =  CGRectGetMaxY(rect);
+            cropRect.size = CGSizeMake(!self.keepingCropAspectRatio ? cropRect.size.width : cropRect.size.width * (cappedHeight / cropRect.size.height),
+                cappedHeight);
+        }
+        if (CGRectGetMaxX(rect) > CGRectGetMaxX(self.zoomingView.frame)) {
+            CGFloat cappedWidth = CGRectGetMaxX([self.scrollView convertRect:self.zoomingView.frame toView:self]) - CGRectGetMinX(cropRect);
+            cropRect.size = CGSizeMake(cappedWidth,
+                !self.keepingCropAspectRatio ? cropRect.size.height : cropRect.size.height * (cappedWidth/cropRect.size.width));
+        }
+        if (CGRectGetMaxY(rect) > CGRectGetMaxY(self.zoomingView.frame)) {
+            CGFloat cappedHeight =  CGRectGetMaxY([self.scrollView convertRect:self.zoomingView.frame toView:self]) - CGRectGetMinY(cropRect);
+            cropRect.size = CGSizeMake(!self.keepingCropAspectRatio ? cropRect.size.width : cropRect.size.width * (cappedHeight / cropRect.size.height),
+                cappedHeight);
+        }
+        
+        return cropRect
     }
 }
