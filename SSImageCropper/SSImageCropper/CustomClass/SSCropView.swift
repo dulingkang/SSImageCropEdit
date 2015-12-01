@@ -116,22 +116,22 @@ class SSCropView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate, SSC
         set {
             self.resetCropRect()
             
-            let scrollViewFrame = self.scrollView.frame;
-            let imageSize = self.image!.size;
-            
-            let scale = min(CGRectGetWidth(scrollViewFrame) / imageSize.width,
-                CGRectGetHeight(scrollViewFrame) / imageSize.height);
-            
-            let x = CGRectGetMinX(imageCropRect) * scale + CGRectGetMinX(scrollViewFrame);
-            let y = CGRectGetMinY(imageCropRect) * scale + CGRectGetMinY(scrollViewFrame);
-            let width = CGRectGetWidth(imageCropRect) * scale;
-            let height = CGRectGetHeight(imageCropRect) * scale;
-            
-            let rect = CGRectMake(x, y, width, height);
-            let intersection = CGRectIntersection(rect, scrollViewFrame);
-            
-            if (!CGRectIsNull(intersection)) {
-                self.cropRect = intersection;
+            let scrollViewFrame = self.scrollView.frame
+            if let imageSize = self.image?.size {
+                let scale = min(CGRectGetWidth(scrollViewFrame) / imageSize.width,
+                    CGRectGetHeight(scrollViewFrame) / imageSize.height);
+                
+                let x = CGRectGetMinX(imageCropRect) * scale + CGRectGetMinX(scrollViewFrame);
+                let y = CGRectGetMinY(imageCropRect) * scale + CGRectGetMinY(scrollViewFrame);
+                let width = CGRectGetWidth(imageCropRect) * scale;
+                let height = CGRectGetHeight(imageCropRect) * scale;
+                
+                let rect = CGRectMake(x, y, width, height);
+                let intersection = CGRectIntersection(rect, scrollViewFrame);
+                
+                if (!CGRectIsNull(intersection)) {
+                    self.cropRect = intersection;
+                }
             }
         }
         get {
@@ -269,14 +269,16 @@ class SSCropView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate, SSC
             UIView.setAnimationBeginsFromCurrentState(true)
         }
         
-        self.imageView!.transform = CGAffineTransformIdentity
+        self.imageView?.transform = CGAffineTransformIdentity
         
         let contentSize = self.scrollView.contentSize
         let initialRect = CGRectMake(0.0, 0.0, contentSize.width, contentSize.height)
         self.scrollView.zoomToRect(initialRect, animated: false)
         
-        self.scrollView.bounds = self.imageView!.bounds
-        self.layoutCropRectViewWithCropRect(self.scrollView.bounds)
+        if let bounds = self.imageView?.bounds {
+            self.scrollView.bounds = bounds
+            self.layoutCropRectViewWithCropRect(bounds)
+        }
         
         if (animated) {
             UIView.commitAnimations()

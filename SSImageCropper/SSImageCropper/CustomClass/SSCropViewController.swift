@@ -9,7 +9,6 @@
 import UIKit
 
 protocol SSCropViewControllerDelegate {
-    func cropViewControllerDidFinish(controller: SSCropViewController, croppedImage: UIImage)
     func cropViewControllerDidFinish(controller: SSCropViewController, croppedImage: UIImage, transform: CGAffineTransform, cropRect: CGRect)
     func cropViewControllerDidCancel(controller: SSCropViewController)
 }
@@ -17,14 +16,7 @@ protocol SSCropViewControllerDelegate {
 class SSCropViewController: UIViewController, UIActionSheetDelegate {
 
     var delegate: SSCropViewControllerDelegate?
-    var image: UIImage? {
-        get {
-            return self.image
-        }
-        set {
-            self.cropView.image = self.image
-        }
-    }
+    var image: UIImage?
     var keepingCropAspectRatio: Bool {
         get {
             return self.keepingCropAspectRatio
@@ -46,8 +38,6 @@ class SSCropViewController: UIViewController, UIActionSheetDelegate {
             return self.cropRect
         }
         set {
-            self.imageCropRect = CGRectZero
-            
             var cropViewCropRect = self.cropView.cropRect
             cropViewCropRect.origin.x += cropRect.origin.x
             cropViewCropRect.origin.y += cropRect.origin.y
@@ -58,15 +48,7 @@ class SSCropViewController: UIViewController, UIActionSheetDelegate {
             self.cropView.cropRect = cropViewCropRect
         }
     }
-    var imageCropRect: CGRect! {
-        get {
-            return self.imageCropRect
-        }
-        set {
-            self.cropRect = CGRectZero
-            self.cropView.imageCropRect = self.imageCropRect
-        }
-    }
+    var imageCropRect: CGRect!
     var toolBarHidden = false
     var rotationEnabled: Bool {
         get {
@@ -93,23 +75,32 @@ class SSCropViewController: UIViewController, UIActionSheetDelegate {
         }
     }
     
-    private var cropView: SSCropView!
+     var cropView: SSCropView!
     private var actionSheet: UIActionSheet!
     
     //MARK: - life cycle
+    init(image: UIImage) {
+        super.init(nibName: nil, bundle: nil)
+        self.image = image
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancel:")
         
          self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "done:")
-        
-        
-        self.rotationEnabled = true
+    
         self.view.backgroundColor = UIColor.blackColor()
         self.cropView = SSCropView.init(frame: self.view.bounds)
-        self.view.addSubview(self.cropView)
-        
         self.cropView.image = self.image
+        self.view.addSubview(self.cropView)
+        self.cropView.imageCropRect = self.imageCropRect
+        self.rotationEnabled = true
+        
         self.cropView.rotationGestureRecognizer.enabled = self.rotationEnabled
         
         if self.cropAspectRatio != 0 {

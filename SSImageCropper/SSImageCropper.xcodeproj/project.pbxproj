@@ -16,6 +16,7 @@
 		3ADBA8501C089ECB0080E0A7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3ADBA84E1C089ECB0080E0A7 /* LaunchScreen.storyboard */; };
 		3ADBA8591C089F370080E0A7 /* SSCropRectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADBA8581C089F370080E0A7 /* SSCropRectView.swift */; };
 		3ADE26181C0C99E000C04CDD /* ImageCropExtention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADE26171C0C99E000C04CDD /* ImageCropExtention.swift */; };
+		3AE42A3D1C0DE47E00CCFA43 /* girl.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3AE42A3C1C0DE47E00CCFA43 /* girl.jpg */; };
 		3AE596721C0C16C900E7700B /* SSCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE596711C0C16C900E7700B /* SSCropView.swift */; };
 /* End PBXBuildFile section */
 
@@ -31,6 +32,7 @@
 		3ADBA8511C089ECB0080E0A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3ADBA8581C089F370080E0A7 /* SSCropRectView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SSCropRectView.swift; sourceTree = "<group>"; };
 		3ADE26171C0C99E000C04CDD /* ImageCropExtention.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCropExtention.swift; sourceTree = "<group>"; };
+		3AE42A3C1C0DE47E00CCFA43 /* girl.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = girl.jpg; sourceTree = "<group>"; };
 		3AE596711C0C16C900E7700B /* SSCropView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SSCropView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -69,6 +71,7 @@
 				3ADBA8471C089ECB0080E0A7 /* ViewController.swift */,
 				3ADBA8491C089ECB0080E0A7 /* Main.storyboard */,
 				3ADBA84C1C089ECB0080E0A7 /* Assets.xcassets */,
+				3AE42A3C1C0DE47E00CCFA43 /* girl.jpg */,
 				3ADBA84E1C089ECB0080E0A7 /* LaunchScreen.storyboard */,
 				3ADBA8511C089ECB0080E0A7 /* Info.plist */,
 			);
@@ -146,6 +149,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3ADBA8501C089ECB0080E0A7 /* LaunchScreen.storyboard in Resources */,
+				3AE42A3D1C0DE47E00CCFA43 /* girl.jpg in Resources */,
 				3ADBA84D1C089ECB0080E0A7 /* Assets.xcassets in Resources */,
 				3ADBA84B1C089ECB0080E0A7 /* Main.storyboard in Resources */,
 			);
