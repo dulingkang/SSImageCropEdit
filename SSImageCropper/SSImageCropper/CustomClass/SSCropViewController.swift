@@ -17,44 +17,31 @@ class SSCropViewController: UIViewController, UIActionSheetDelegate {
 
     var delegate: SSCropViewControllerDelegate?
     var image: UIImage?
-    var keepingCropAspectRatio: Bool {
-        get {
-            return self.keepingCropAspectRatio
-        }
-        set {
+    var keepingCropAspectRatio = true {
+        didSet {
             self.cropView.keepingCropAspectRatio = self.keepingCropAspectRatio
         }
     }
-    var cropAspectRatio: CGFloat {
-        get {
-            return self.cropAspectRatio
-        }
-        set {
+    var cropAspectRatio: CGFloat = 1.0 {
+        didSet {
             self.cropView.cropAspectRatio = self.cropAspectRatio
         }
     }
-    var cropRect: CGRect! {
-        get {
-            return self.cropRect
-        }
-        set {
+    var cropRect = CGRectZero {
+        didSet {
             var cropViewCropRect = self.cropView.cropRect
             cropViewCropRect.origin.x += cropRect.origin.x
             cropViewCropRect.origin.y += cropRect.origin.y
             
             let size = CGSizeMake(min(CGRectGetMaxX(cropViewCropRect) - CGRectGetMinX(cropViewCropRect), CGRectGetWidth(cropRect)),
                 min(CGRectGetMaxY(cropViewCropRect) - CGRectGetMinY(cropViewCropRect), CGRectGetHeight(cropRect)))
-            cropViewCropRect.size = size
-            self.cropView.cropRect = cropViewCropRect
+            self.cropView.cropRect.size = size
         }
     }
-    var imageCropRect: CGRect!
+    var imageCropRect = CGRectZero
     var toolBarHidden = false
-    var rotationEnabled: Bool {
-        get {
-            return self.rotationEnabled
-        }
-        set {
+    var rotationEnabled = true {
+        didSet {
             self.cropView.rotationGestureRecognizer.enabled = self.rotationEnabled
         }
     }
@@ -66,16 +53,8 @@ class SSCropViewController: UIViewController, UIActionSheetDelegate {
             
         }
     }
-    var zoomedCropRect: CGRect! {
-        get {
-            return self.zoomedCropRect
-        }
-        set {
-            
-        }
-    }
-    
-     var cropView: SSCropView!
+    var zoomedCropRect = CGRectZero
+    var cropView: SSCropView!
     private var actionSheet: UIActionSheet!
     
     //MARK: - life cycle
@@ -95,14 +74,16 @@ class SSCropViewController: UIViewController, UIActionSheetDelegate {
          self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "done:")
     
         self.view.backgroundColor = UIColor.blackColor()
-        self.cropView = SSCropView.init(frame: self.view.bounds)
-        self.cropView.image = self.image
+        self.cropView = SSCropView.init(frame: self.view.bounds, image: self.image!)
         self.view.addSubview(self.cropView)
+        self.cropView.image = self.image
         self.cropView.imageCropRect = self.imageCropRect
         self.rotationEnabled = true
         
         self.cropView.rotationGestureRecognizer.enabled = self.rotationEnabled
-        
+    }
+    
+    override func viewDidAppear(animated: Bool) {
         if self.cropAspectRatio != 0 {
             self.cropView.cropAspectRatio = self.cropAspectRatio
         }

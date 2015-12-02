@@ -13,19 +13,11 @@ import AVFoundation
 
 class SSCropView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate, SSCropRectViewDelegate {
 
-    var image: UIImage? {
-        set {
-            
+    var image: UIImage! {
+        didSet {
             self.imageView?.removeFromSuperview()
-            self.imageView = nil;
-            
             self.zoomingView?.removeFromSuperview()
-            self.zoomingView = nil;
-            
             self.setNeedsLayout()
-        }
-        get {
-            return self.image
         }
     }
     var croppedImage: UIImage? {
@@ -75,7 +67,7 @@ class SSCropView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate, SSC
             return self.imageView!.transform
         }
     }
-    var userHasModifiedCropArea: Bool! {
+    var userHasModifiedCropArea: Bool {
         set {
             
         }
@@ -86,15 +78,12 @@ class SSCropView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate, SSC
                 !CGAffineTransformEqualToTransform(self.rotation, CGAffineTransformIdentity))
         }
     }
-    var keepingCropAspectRatio: Bool! {
-        set {
+    var keepingCropAspectRatio = true {
+        didSet {
             self.cropRectView.keepAspectRatio = self.keepingCropAspectRatio
         }
-        get {
-            return self.keepingCropAspectRatio
-        }
     }
-    var cropAspectRatio: CGFloat! {
+    var cropAspectRatio: CGFloat {
         set {
             self.setCropAspectRatio(self.cropAspectRatio, center: true)
         }
@@ -105,37 +94,33 @@ class SSCropView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate, SSC
             return width / height
         }
     }
-    var cropRect: CGRect! {
+    var cropRect: CGRect {
         set {
         }
         get {
             return self.scrollView.frame
         }
     }
-    var imageCropRect: CGRect! {
-        set {
+    var imageCropRect: CGRect? {
+        didSet {
             self.resetCropRect()
             
             let scrollViewFrame = self.scrollView.frame
-            if let imageSize = self.image?.size {
-                let scale = min(CGRectGetWidth(scrollViewFrame) / imageSize.width,
-                    CGRectGetHeight(scrollViewFrame) / imageSize.height);
-                
-                let x = CGRectGetMinX(imageCropRect) * scale + CGRectGetMinX(scrollViewFrame);
-                let y = CGRectGetMinY(imageCropRect) * scale + CGRectGetMinY(scrollViewFrame);
-                let width = CGRectGetWidth(imageCropRect) * scale;
-                let height = CGRectGetHeight(imageCropRect) * scale;
-                
-                let rect = CGRectMake(x, y, width, height);
-                let intersection = CGRectIntersection(rect, scrollViewFrame);
-                
-                if (!CGRectIsNull(intersection)) {
-                    self.cropRect = intersection;
-                }
+            let imageSize = self.image?.size
+            let scale = min(CGRectGetWidth(scrollViewFrame) / imageSize!.width,
+                CGRectGetHeight(scrollViewFrame) / imageSize!.height);
+            
+            let x = CGRectGetMinX(imageCropRect!) * scale + CGRectGetMinX(scrollViewFrame);
+            let y = CGRectGetMinY(imageCropRect!) * scale + CGRectGetMinY(scrollViewFrame);
+            let width = CGRectGetWidth(imageCropRect!) * scale;
+            let height = CGRectGetHeight(imageCropRect!) * scale;
+            
+            let rect = CGRectMake(x, y, width, height);
+            let intersection = CGRectIntersection(rect, scrollViewFrame);
+            
+            if (!CGRectIsNull(intersection)) {
+                self.cropRect = intersection;
             }
-        }
-        get {
-            return self.imageCropRect
         }
     }
     var rotationAngle: CGFloat! {
@@ -165,13 +150,13 @@ class SSCropView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate, SSC
     private var insetRect: CGRect!
     private var editingRect: CGRect!
     
-    private var resizing: Bool!
+    private var resizing: Bool = false
     private var interfaceOrientation: UIInterfaceOrientation!
     
     //MARK: - system method
-    override init(frame: CGRect) {
+    init(frame: CGRect, image: UIImage) {
         super.init(frame: frame)
-        self.initViews()
+        self.initViews(image)
     }
     
     required init(coder: NSCoder) {
@@ -194,36 +179,6 @@ class SSCropView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate, SSC
         }
         
         return super.hitTest(point, withEvent: event)
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        if (self.image != nil) {
-            return
-        }
-        
-        self.interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
-        if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation)) {
-            self.editingRect = CGRectInset(self.bounds, self.MarginLeft, self.MarginTop)
-        } else {
-            self.editingRect = CGRectInset(self.bounds, self.MarginLeft, self.MarginLeft)
-        }
-        
-        if (self.imageView == nil) {
-            if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation)) {
-                self.insetRect = CGRectInset(self.bounds, self.MarginLeft, self.MarginTop);
-            } else {
-                self.insetRect = CGRectInset(self.bounds, self.MarginLeft, self.MarginLeft);
-            }
-            self.setupImageView()
-        }
-        
-        if (!self.resizing) {
-            self.layoutCropRectViewWithCropRect(self.scrollView.frame)
-            if (self.interfaceOrientation != interfaceOrientation) {
-                self.zoomToCropRect(self.scrollView.frame)
-            }
-        }
     }
     
     //MARK: -  delegate
@@ -290,7 +245,8 @@ class SSCropView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate, SSC
     }
     
     //MARK: - private method
-    private func initViews() {
+    private func initViews(image: UIImage) {
+        self.image = image
         self.autoresizingMask = UIViewAutoresizing.FlexibleWidth
         self.backgroundColor = UIColor.clearColor()
         self.scrollView = UIScrollView.init(frame: self.bounds)
@@ -328,6 +284,29 @@ class SSCropView: UIView, UIScrollViewDelegate, UIGestureRecognizerDelegate, SSC
         self.bottomOverlayView = UIView.init()
         self.bottomOverlayView.backgroundColor = UIColor.init(white: 0.0, alpha: 0.4)
         self.addSubview(self.bottomOverlayView)
+        
+        self.interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
+        if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation)) {
+            self.editingRect = CGRectInset(self.bounds, self.MarginLeft, self.MarginTop)
+        } else {
+            self.editingRect = CGRectInset(self.bounds, self.MarginLeft, self.MarginLeft)
+        }
+        
+        if (self.imageView == nil) {
+            if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation)) {
+                self.insetRect = CGRectInset(self.bounds, self.MarginLeft, self.MarginTop);
+            } else {
+                self.insetRect = CGRectInset(self.bounds, self.MarginLeft, self.MarginLeft);
+            }
+            self.setupImageView()
+        }
+        
+        if (!self.resizing) {
+            self.layoutCropRectViewWithCropRect(self.scrollView.frame)
+            if (self.interfaceOrientation != interfaceOrientation) {
+                self.zoomToCropRect(self.scrollView.frame)
+            }
+        }
     }
     
     private func setupImageView() {

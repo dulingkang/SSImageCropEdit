@@ -16,34 +16,25 @@ protocol SSCropRectViewDelegate {
 
 class SSCropRectView: UIView, SSResizeControlDelegate {
     
-    var showGridBig: Bool {
-        set {
+    var showGridBig = true{
+        didSet {
             self.setNeedsDisplay()
-        }
-        get {
-            return self.showGridBig
         }
     }
     
-    var showGridSmall: Bool {
-        set {
+    var showGridSmall = false {
+        didSet {
             self.setNeedsDisplay()
-        }
-        get {
-            return self.showGridSmall
         }
     }
     
-    var keepAspectRatio: Bool {
-        set {
+    var keepAspectRatio = true {
+        didSet {
             if self.keepAspectRatio {
                 let width = self.bounds.size.width
                 let height = self.bounds.size.height
                 self.fixedAspectRatio = fmin(width / height, height / width)
             }
-        }
-        get {
-            return self.keepAspectRatio
         }
     }
     

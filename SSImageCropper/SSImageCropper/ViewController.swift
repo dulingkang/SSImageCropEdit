@@ -12,8 +12,13 @@ class ViewController: UIViewController, SSCropViewControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let imageView = UIImageView.init(frame: CGRectMake(0, 44, 320, 440))
+        imageView.image = UIImage(named: "girl.jpg")
+        imageView.contentMode = UIViewContentMode.ScaleAspectFit
+        imageView.userInteractionEnabled = true
+        self.view.addSubview(imageView)
         let tap = UITapGestureRecognizer.init(target: self, action: "tapPressed:")
-        self.view.addGestureRecognizer(tap)
+        imageView.addGestureRecognizer(tap)
         // Do any additional setup after loading the view, typically from a nib.
     }
 
